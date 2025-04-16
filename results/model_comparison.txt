@@ -1,0 +1,7 @@
+==== So sánh các mô hình dự đoán rating phim ====
+
+Mô hình                        MAE             RMSE            Correlation     Thời gian (ms) 
+------------------------------------------------------------------------------------------
+Linear Regression              0.2318          0.2806          0.4507          19925          
+Decision Stump                 0.0821          0.1393          0.8965          20252          
+REPTree                        0.0651          0.1214          0.9224    
