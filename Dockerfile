@@ -26,7 +26,7 @@ COPY --from=build /app/target/movie-rating-prediction-1.0-SNAPSHOT.jar app.jar
 COPY --from=build /app/data /app/data
 COPY --from=build /app/logs /app/logs
 
-ENV JAVA_OPTS="-Xms512m -Xmx1g"
+ENV JAVA_OPTS="-Xms256m -Xmx450m"
 ENV PORT=8080
 
 EXPOSE ${PORT}
