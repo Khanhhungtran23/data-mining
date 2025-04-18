@@ -28,7 +28,7 @@ movie-rating-prediction/
 │       │   └── org/
 │       │       └── example/
 │       │           ├── controller/
-│       │           │   └── MovieRatingController.java
+│       │           │   └── MovieRatingController.java - HealthController
 │       │           ├── dto/
 │       │           │   ├── MovieRequestDTO.java
 │       │           │   └── PredictionResponseDTO.java
@@ -36,13 +36,13 @@ movie-rating-prediction/
 │       │           │   ├── GlobalExceptionHandler.java
 │       │           │   └── ModelPredictionException.java
 │       │           ├── service/
-│       │           │   └── MovieRatingPredictionService.java
+│       │           │   └── PMMLModelService.java
 │       │           ├── util/
 │       │           │   └── DataPreparationUtil.java
 │       │           └── MovieRatingPredictionApplication.java
 │       └── resources/
-│           └── application.properties
+│           └── application.properties - model/ - log4j.properties
 ├── Dockerfile
-├── docker-compose.yml
+├── .dockerignore
 └── pom.xml
 ```
