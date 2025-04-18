@@ -14,9 +14,10 @@ RUN mkdir -p /app/logs
 
 # JVM arguments
 ENV JAVA_OPTS="-Xms512m -Xmx1g"
+ENV PORT=8080
 
 # Expose the application port
-EXPOSE 8080
+EXPOSE ${PORT}
 
 # Command to run the application
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -Dserver.port=${PORT} -jar app.jar"]

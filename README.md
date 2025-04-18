@@ -52,6 +52,7 @@ You can run each class individually to evaluate each model, or run `ModelCompari
 
 ```bash
 mvn exec:java -Dexec.mainClass="org.example.Main"
+or mvn compile exec:java -Dexec.mainClass="org.example.Main"
 ```
 
 ### General Model Evaluation
