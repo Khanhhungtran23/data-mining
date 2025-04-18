@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.example.dto.MovieRequestDTO;
 import org.example.dto.PredictionResponseDTO;
-import org.example.service.MovieRatingPredictionService;
+import org.example.service.PMMLModelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +23,9 @@ public class MovieRatingController {
 
     private static final Logger logger = LoggerFactory.getLogger(MovieRatingController.class);
 
-    private final MovieRatingPredictionService predictionService;
+    private final PMMLModelService predictionService;
 
-    public MovieRatingController(MovieRatingPredictionService predictionService) {
+    public MovieRatingController(PMMLModelService predictionService) {
         this.predictionService = predictionService;
     }
 

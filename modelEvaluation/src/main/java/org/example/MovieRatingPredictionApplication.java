@@ -18,7 +18,7 @@ public class MovieRatingPredictionApplication {
         return new OpenAPI()
                 .info(new Info()
                         .title("Movie Rating Prediction API")
-                        .version("1.0")
+                        .version("1.1")
                         .description("API for predicting movie averageRating based on movie attributes"));
     }
 }

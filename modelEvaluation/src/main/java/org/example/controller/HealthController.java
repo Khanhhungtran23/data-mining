@@ -1,6 +1,6 @@
 package org.example.controller;
 
-import org.example.service.MovieRatingPredictionService;
+import org.example.service.PMMLModelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +13,14 @@ import java.util.Map;
 public class HealthController {
 
     @Autowired
-    private MovieRatingPredictionService movieRatingPredictionService;
+    private PMMLModelService predictionService;
 
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "UP");
-        response.put("modelStatus", movieRatingPredictionService.isModelTrained() ?
-                "TRAINED" : "TRAINING_IN_PROGRESS");
-        response.put("modelType", movieRatingPredictionService.getModelType());
+        response.put("modelType", predictionService.getModelType());
+        response.put("message", "Movie Rating Prediction Service is running");
 
         return ResponseEntity.ok(response);
     }
