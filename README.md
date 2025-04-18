@@ -19,9 +19,7 @@ This Spring Boot application serves as a backend API for predicting movie rating
 
 ```
 movie-rating-prediction/
-├── data/
-│   ├── cleaned_data.csv (original data file)
-│   └── output.csv (processed data file)
+|
 ├── src/
 │   └── main/
 │       ├── java/

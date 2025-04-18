@@ -35,7 +35,7 @@ public class PMMLModelService {
             logger.info("Loading PMML model...");
 
             // Load PMML model from resources
-            ClassPathResource resource = new ClassPathResource("models/random_forest_model.pmml");
+            ClassPathResource resource = new ClassPathResource("src/main/resources/models/m5p_model.pmml");
             InputStream inputStream = resource.getInputStream();
 
             // Parse PMML
@@ -50,12 +50,12 @@ public class PMMLModelService {
             inputFields = evaluator.getInputFields();
             targetFields = evaluator.getTargetFields();
 
-            logger.info("PMML model loaded successfully. Model type: {}", modelType);
+            logger.info("PMML format - M5P model loaded successfully. Model type: {}", modelType);
             logger.info("Model has {} input fields and {} target fields",
                     inputFields.size(), targetFields.size());
 
         } catch (Exception e) {
-            logger.error("Failed to initialize PMML model", e);
+            logger.error("Failed to initialize m5p model", e);
             throw new ModelPredictionException("Model initialization failed", e);
         }
     }
