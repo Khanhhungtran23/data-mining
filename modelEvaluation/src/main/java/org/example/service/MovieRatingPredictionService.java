@@ -78,10 +78,10 @@ public class MovieRatingPredictionService {
             // Configure a more memory-efficient RandomForest
             model = new RandomForest();
             // Configure RandomForest with memory constraints
-            ((RandomForest) model).setNumIterations(5);  // Reduced from 10 to 5 trees
-            ((RandomForest) model).setMaxDepth(3);       // Reduced depth for memory efficiency
-            ((RandomForest) model).setNumFeatures(3);    // Fewer features per tree
-            ((RandomForest) model).setBatchSize("50");   // Smaller batch size
+            ((RandomForest) model).setNumIterations(40);  // Reduced from 10 to 5 trees
+            ((RandomForest) model).setMaxDepth(10);       // Reduced depth for memory efficiency
+            ((RandomForest) model).setNumFeatures(8);    // Fewer features per tree
+            ((RandomForest) model).setBatchSize("100");   // Smaller batch size
             ((RandomForest) model).setSeed(1);
             modelType = "RandomForest (Memory-Optimized)";
 
@@ -126,7 +126,7 @@ public class MovieRatingPredictionService {
             prediction = Math.max(0, Math.min(10, prediction));
 
             logger.info("Predicted averageRating for movie '{}': {}", movieRequestDTO.getTitle(), prediction);
-            return prediction * 10;
+            return prediction * 10 + 1;
 
         } catch (Exception e) {
             logger.error("Error predicting movie averageRating", e);
