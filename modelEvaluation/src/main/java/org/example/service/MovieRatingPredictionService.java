@@ -39,7 +39,7 @@ public class MovieRatingPredictionService {
             logger.info("Loading and training the prediction model...");
 
             // Load dataset to learn the structure
-            DataSource source = new DataSource("/Users/hungtran/Downloads/Projects/data-mining/modelEvaluation/data/output.csv");
+            DataSource source = new DataSource("data/output.csv");
             Instances dataset = source.getDataSet();
 
             // Set the class index (averageRating)
