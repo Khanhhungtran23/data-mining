@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import weka.classifiers.Classifier;
-import weka.classifiers.trees.M5P;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -16,6 +15,8 @@ import weka.classifiers.trees.RandomForest;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Service for movie rating prediction
@@ -27,16 +28,34 @@ public class MovieRatingPredictionService {
 
     private Classifier model;
     private ArrayList<Attribute> attributes;
-    private String modelType;
+    private String modelType = "Not loaded yet";
     private Instances datasetStructure;
+    private final AtomicBoolean modelTrained = new AtomicBoolean(false);
+    private final AtomicBoolean trainingInProgress = new AtomicBoolean(false);
 
     /**
-     * Initialize the prediction model when the service starts
+     * Initialize basic structure and start async model training
      */
     @PostConstruct
     public void initModel() {
+        logger.info("Initializing prediction service...");
+
+        // Start model training in background
+        CompletableFuture.runAsync(this::trainModelAsync);
+    }
+
+    /**
+     * Trains the model asynchronously to allow the application to start
+     */
+    private void trainModelAsync() {
+        // Prevent multiple training attempts
+        if (trainingInProgress.getAndSet(true)) {
+            logger.info("Model training already in progress");
+            return;
+        }
+
         try {
-            logger.info("Loading and training the prediction model...");
+            logger.info("Starting background model training...");
 
             // Load dataset to learn the structure
             DataSource source = new DataSource("data/output.csv");
@@ -56,28 +75,27 @@ public class MovieRatingPredictionService {
                 attributes.add(dataset.attribute(i));
             }
 
-            // Choose and train the model
-            // We're using M5P based on the assumption that it's a better model for our use case
-//            model = new M5P();
-//            modelType = "M5P Decision Tree";
-
-//            // Choose and train the model
+            // Configure a more memory-efficient RandomForest
             model = new RandomForest();
-            // Cấu hình các tham số cho Random Forest
-            ((RandomForest) model).setNumIterations(10);  // 10 cây thay vì 100
-            ((RandomForest) model).setMaxDepth(5);        // Giới hạn độ sâu
-            ((RandomForest) model).setNumFeatures(4);     // Giới hạn số thuộc tính
-            ((RandomForest) model).setBatchSize(String.valueOf(100));     // Kích thước batch nhỏ hơn
+            // Configure RandomForest with memory constraints
+            ((RandomForest) model).setNumIterations(5);  // Reduced from 10 to 5 trees
+            ((RandomForest) model).setMaxDepth(3);       // Reduced depth for memory efficiency
+            ((RandomForest) model).setNumFeatures(3);    // Fewer features per tree
+            ((RandomForest) model).setBatchSize("50");   // Smaller batch size
             ((RandomForest) model).setSeed(1);
-            modelType = "Random Forest";
+            modelType = "RandomForest (Memory-Optimized)";
 
             logger.info("Training the {} model...", modelType);
             model.buildClassifier(dataset);
 
+            modelTrained.set(true);
             logger.info("Model training completed successfully");
         } catch (Exception e) {
-            logger.error("Failed to initialize the prediction model", e);
-            throw new ModelPredictionException("Model initialization failed", e);
+            logger.error("Failed to train the prediction model", e);
+            modelType = "Training Failed - Using Fallback";
+            // We won't throw exception here to allow app to continue running
+        } finally {
+            trainingInProgress.set(false);
         }
     }
 
@@ -89,6 +107,11 @@ public class MovieRatingPredictionService {
      */
     public double predictRating(MovieRequestDTO movieRequestDTO) {
         try {
+            if (!modelTrained.get()) {
+                logger.warn("Model not fully trained yet - using fallback prediction");
+                return 7.0; // Return a reasonable default value
+            }
+
             // Use utility class to prepare the data for prediction
             Instances predictionDataset = DataPreparationUtil.prepareInstanceForPrediction(
                     movieRequestDTO, datasetStructure);
@@ -115,6 +138,13 @@ public class MovieRatingPredictionService {
      * Get the name of the model being used for predictions
      */
     public String getModelType() {
-        return modelType;
+        return modelType + (modelTrained.get() ? " (Trained)" : " (Training in progress)");
+    }
+
+    /**
+     * Check if model is trained and ready
+     */
+    public boolean isModelTrained() {
+        return modelTrained.get();
     }
 }

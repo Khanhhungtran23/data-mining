@@ -9,11 +9,11 @@ COPY modelEvaluation/pom.xml .
 COPY modelEvaluation/src ./src
 COPY modelEvaluation/data ./data
 
-# Tạo thư mục logs nếu cần
+# Create logs directory
 RUN mkdir -p /app/logs
 
-# Build project
-RUN mvn clean package -DskipTests
+# Build project with reduced memory usage
+RUN mvn clean package -DskipTests -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
 
 # ---------------------
 # Runtime Stage
@@ -24,11 +24,18 @@ WORKDIR /app
 
 COPY --from=build /app/target/movie-rating-prediction-1.0-SNAPSHOT.jar app.jar
 COPY --from=build /app/data /app/data
-COPY --from=build /app/logs /app/logs
+# Create logs directory
+RUN mkdir -p /app/logs
 
-ENV JAVA_OPTS="-Xms256m -Xmx450m"
+# Optimize for memory constrained environments
+ENV JAVA_OPTS="-Xms128m -Xmx400m -XX:+UseSerialGC -XX:+UseCompressedOops -XX:MaxMetaspaceSize=128m -Xss256k -XX:+AlwaysPreTouch -XX:+DisableExplicitGC"
 ENV PORT=8080
 
+# Explicitly expose the port
 EXPOSE ${PORT}
 
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -Dserver.port=${PORT} -jar app.jar"]
+# Health check to confirm app is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 CMD wget -q --spider http://localhost:${PORT}/health || exit 1
+
+# Print memory info on startup and ensure we bind to all interfaces
+ENTRYPOINT ["sh", "-c", "echo 'Available memory:' && free -m && echo 'Starting with memory limits: ${JAVA_OPTS}' && java ${JAVA_OPTS} -Dserver.port=${PORT} -Dserver.address=0.0.0.0 -jar app.jar"]
