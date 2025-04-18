@@ -1,23 +1,37 @@
-FROM openjdk:11-jdk-slim
+# ---------------------
+# Build Stage
+# ---------------------
+FROM maven:3.8.5-openjdk-11 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy the jar file
-COPY target/movie-rating-prediction-*.jar app.jar
+# Copy toàn bộ project vào container
+COPY . .
 
-# Copy data directory
+# Build project (compile + tạo jar)
+RUN mvn clean package -DskipTests
+
+# ---------------------
+# Runtime Stage
+# ---------------------
+FROM openjdk:11-jdk-slim
+
+WORKDIR /app
+
+# Copy file JAR đã build từ stage trước
+COPY --from=build /app/target/movie-rating-prediction-1.0-SNAPSHOT.jar app.jar
+
+# Copy thư mục data vào container
 COPY data/ /app/data/
 
-# Create logs directory
+# Tạo thư mục logs
 RUN mkdir -p /app/logs
 
-# JVM arguments
+# Cấu hình JVM
 ENV JAVA_OPTS="-Xms512m -Xmx1g"
 ENV PORT=8080
 
-# Expose the application port
 EXPOSE ${PORT}
 
-# Command to run the application
+# Chạy ứng dụng
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -Dserver.port=${PORT} -jar app.jar"]
