@@ -64,9 +64,9 @@ public class MovieRatingPredictionService {
 //            // Choose and train the model
             model = new RandomForest();
             // Cấu hình các tham số cho Random Forest
-            ((RandomForest) model).setNumIterations(50);  // 10 cây thay vì 100
-            ((RandomForest) model).setMaxDepth(10);        // Giới hạn độ sâu
-            ((RandomForest) model).setNumFeatures(8);     // Giới hạn số thuộc tính
+            ((RandomForest) model).setNumIterations(10);  // 10 cây thay vì 100
+            ((RandomForest) model).setMaxDepth(5);        // Giới hạn độ sâu
+            ((RandomForest) model).setNumFeatures(4);     // Giới hạn số thuộc tính
             ((RandomForest) model).setBatchSize(String.valueOf(100));     // Kích thước batch nhỏ hơn
             ((RandomForest) model).setSeed(1);
             modelType = "Random Forest";
