@@ -5,10 +5,10 @@ FROM maven:3.8.5-openjdk-11 AS build
 
 WORKDIR /app
 
-# Copy toàn bộ project vào container
-COPY . .
+# Copy project Java từ thư mục modelEvaluation vào container
+COPY modelEvaluation /app
 
-# Build project (compile + tạo jar)
+# Build project (skip test để nhanh hơn)
 RUN mvn clean package -DskipTests
 
 # ---------------------
@@ -21,8 +21,8 @@ WORKDIR /app
 # Copy file JAR đã build từ stage trước
 COPY --from=build /app/target/movie-rating-prediction-1.0-SNAPSHOT.jar app.jar
 
-# Copy thư mục data vào container
-COPY modelEvaluation/data/ /app/data/
+# Copy thư mục data vào container (nằm trong modelEvaluation/data)
+COPY modelEvaluation/data /app/data
 
 # Tạo thư mục logs
 RUN mkdir -p /app/logs
