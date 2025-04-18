@@ -37,5 +37,5 @@ EXPOSE ${PORT}
 # Health check to confirm app is running
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 CMD wget -q --spider http://localhost:${PORT}/health || exit 1
 
-# Print memory info on startup and ensure we bind to all interfaces
-ENTRYPOINT ["sh", "-c", "echo 'Available memory:' && free -m && echo 'Starting with memory limits: ${JAVA_OPTS}' && java ${JAVA_OPTS} -Dserver.port=${PORT} -Dserver.address=0.0.0.0 -jar app.jar"]
+# Start the application with memory limits and ensure we bind to all interfaces
+ENTRYPOINT ["sh", "-c", "echo 'Starting application with memory settings: ${JAVA_OPTS}' && java ${JAVA_OPTS} -Dserver.port=${PORT} -Dserver.address=0.0.0.0 -jar app.jar"]
