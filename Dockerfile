@@ -5,10 +5,14 @@ FROM maven:3.8.5-openjdk-11 AS build
 
 WORKDIR /app
 
-# Copy project Java từ thư mục modelEvaluation vào container
-COPY modelEvaluation /app
+COPY modelEvaluation/pom.xml .
+COPY modelEvaluation/src ./src
+COPY modelEvaluation/data ./data
 
-# Build project (skip test để nhanh hơn)
+# Tạo thư mục logs nếu cần
+RUN mkdir -p /app/logs
+
+# Build project
 RUN mvn clean package -DskipTests
 
 # ---------------------
@@ -18,20 +22,13 @@ FROM openjdk:11-jdk-slim
 
 WORKDIR /app
 
-# Copy file JAR đã build từ stage trước
 COPY --from=build /app/target/movie-rating-prediction-1.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/data /app/data
+COPY --from=build /app/logs /app/logs
 
-# Copy thư mục data vào container (nằm trong modelEvaluation/data)
-COPY modelEvaluation/data /app/data
-
-# Tạo thư mục logs
-RUN mkdir -p /app/logs
-
-# Cấu hình JVM
 ENV JAVA_OPTS="-Xms512m -Xmx1g"
 ENV PORT=8080
 
 EXPOSE ${PORT}
 
-# Chạy ứng dụng
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -Dserver.port=${PORT} -jar app.jar"]
