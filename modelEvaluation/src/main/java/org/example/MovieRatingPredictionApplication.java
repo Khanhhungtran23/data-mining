@@ -19,6 +19,6 @@ public class MovieRatingPredictionApplication {
                 .info(new Info()
                         .title("Movie Rating Prediction API")
                         .version("1.0")
-                        .description("API for predicting movie ratings based on movie attributes"));
+                        .description("API for predicting movie averageRating based on movie attributes"));
     }
 }

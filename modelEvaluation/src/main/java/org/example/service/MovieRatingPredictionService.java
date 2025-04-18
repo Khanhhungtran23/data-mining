@@ -42,8 +42,8 @@ public class MovieRatingPredictionService {
             DataSource source = new DataSource("/Users/hungtran/Downloads/Projects/data-mining/modelEvaluation/data/output.csv");
             Instances dataset = source.getDataSet();
 
-            // Set the class index (vote_average)
-            String targetColumnName = "vote_average";
+            // Set the class index (averageRating)
+            String targetColumnName = "averageRating";
             int classIndex = dataset.attribute(targetColumnName).index();
             dataset.setClassIndex(classIndex);
 
@@ -61,12 +61,14 @@ public class MovieRatingPredictionService {
 //            model = new M5P();
 //            modelType = "M5P Decision Tree";
 
-            // Choose and train the model
+//            // Choose and train the model
             model = new RandomForest();
             // Cấu hình các tham số cho Random Forest
-            ((RandomForest) model).setNumIterations(100); // Số cây = 100
-            ((RandomForest) model).setMaxDepth(0);   // 0 = không giới hạn độ sâu
-            ((RandomForest) model).setSeed(1);       // Giá trị seed cố định để kết quả có thể tái lập
+            ((RandomForest) model).setNumIterations(50);  // 10 cây thay vì 100
+            ((RandomForest) model).setMaxDepth(10);        // Giới hạn độ sâu
+            ((RandomForest) model).setNumFeatures(8);     // Giới hạn số thuộc tính
+            ((RandomForest) model).setBatchSize(String.valueOf(100));     // Kích thước batch nhỏ hơn
+            ((RandomForest) model).setSeed(1);
             modelType = "Random Forest";
 
             logger.info("Training the {} model...", modelType);
@@ -100,12 +102,12 @@ public class MovieRatingPredictionService {
             // Ensure prediction is within reasonable limits for a movie rating (0-10)
             prediction = Math.max(0, Math.min(10, prediction));
 
-            logger.info("Predicted rating for movie '{}': {}", movieRequestDTO.getTitle(), prediction);
-            return prediction;
+            logger.info("Predicted averageRating for movie '{}': {}", movieRequestDTO.getTitle(), prediction);
+            return prediction * 10;
 
         } catch (Exception e) {
-            logger.error("Error predicting movie rating", e);
-            throw new ModelPredictionException("Failed to predict movie rating", e);
+            logger.error("Error predicting movie averageRating", e);
+            throw new ModelPredictionException("Failed to predict movie averageRating", e);
         }
     }
 

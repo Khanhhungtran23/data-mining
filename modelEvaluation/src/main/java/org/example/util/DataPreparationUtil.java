@@ -33,8 +33,8 @@ public class DataPreparationUtil {
                 Attribute att = predictionDataset.attribute(i);
                 String attName = att.name();
 
-                // Skip the class attribute (vote_average) - we're trying to predict this
-                if (attName.equals("vote_average")) {
+                // Skip the class attribute (averageRating) - we're trying to predict this
+                if (attName.equals("averageRating")) {
                     values[i] = weka.core.Utils.missingValue();
                     continue;
                 }
@@ -59,8 +59,8 @@ public class DataPreparationUtil {
                     case "popularity":
                         values[i] = movieRequestDTO.getPopularity();
                         break;
-                    case "averageRating":
-                        values[i] = movieRequestDTO.getAverageRating();
+                    case "vote_average":
+                        values[i] = movieRequestDTO.getVoteAverage();
                         break;
                     case "numVotes":
                         values[i] = movieRequestDTO.getNumVotes();

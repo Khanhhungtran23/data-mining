@@ -1,0 +1,16 @@
+2025-04-17 00:05:57.614  INFO 91179 --- [restartedMain] o.e.MovieRatingPredictionApplication     : Starting MovieRatingPredictionApplication using Java 23.0.2 on 192.168.1.244.non-exists.ptr.local with PID 91179 (/Users/hungtran/Downloads/Projects/data-mining/modelEvaluation/target/classes started by hungtran in /Users/hungtran/Downloads/Projects/data-mining/modelEvaluation)
+2025-04-17 00:05:57.879  INFO 91179 --- [restartedMain] o.e.MovieRatingPredictionApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-17 00:05:58.122  INFO 91179 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-04-17 00:05:58.122  INFO 91179 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-04-17 00:06:00.663  INFO 91179 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-04-17 00:06:00.705  INFO 91179 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-17 00:06:00.706  INFO 91179 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.78]
+2025-04-17 00:06:00.849  INFO 91179 --- [restartedMain] o.a.c.c.C.[.[.[/movie-rating-prediction] : Initializing Spring embedded WebApplicationContext
+2025-04-17 00:06:00.850  INFO 91179 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2725 ms
+2025-04-17 00:06:01.043  INFO 91179 --- [restartedMain] o.e.s.MovieRatingPredictionService       : Loading and training the prediction model...
+2025-04-17 00:06:01.117  WARN 91179 --- [restartedMain] com.github.fommil.jni.JniNamer           : unrecognised architecture: aarch64
+2025-04-17 00:06:01.119  WARN 91179 --- [restartedMain] com.github.fommil.netlib.ARPACK          : Failed to load implementation from: com.github.fommil.netlib.NativeSystemARPACK
+2025-04-17 00:06:01.120  WARN 91179 --- [restartedMain] com.github.fommil.jni.JniNamer           : unrecognised architecture: aarch64
+2025-04-17 00:06:01.122  WARN 91179 --- [restartedMain] com.github.fommil.netlib.ARPACK          : Failed to load implementation from: com.github.fommil.netlib.NativeRefARPACK
+2025-04-17 00:06:14.484  INFO 91179 --- [restartedMain] o.e.s.MovieRatingPredictionService       : Training the Random Forest model...
+2025-04-17 01:14:44.024  WARN 91179 --- [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'movieRatingController' defined in file [/Users/hungtran/Downloads/Projects/data-mining/modelEvaluation/target/classes/org/example/controller/MovieRatingController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'movieRatingPredictionService': Invocation of init method failed; nested exception is java.lang.OutOfMemoryError: Java heap space

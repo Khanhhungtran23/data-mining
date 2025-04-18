@@ -15,7 +15,7 @@ public class Main {
         String inputFilePath = "/Users/hungtran/Downloads/Projects/data-mining/modelEvaluation/data/cleaned_data.csv";
         String outputFilePath = "/Users/hungtran/Downloads/Projects/data-mining/modelEvaluation/data/output.csv";
 
-        System.out.println("Bắt đầu xử lý dữ liệu...");
+        System.out.println("Starting processing data...");
 
         // Load CSV file
         CSVLoader loader = new CSVLoader();
@@ -23,7 +23,7 @@ public class Main {
         Instances dataset = loader.getDataSet();
 
         // In thông tin tổng quan về dataset ban đầu
-        System.out.println("Thông tin tổng quan dataset ban đầu:");
+        System.out.println("General information of original dataset:");
         System.out.println(dataset.toSummaryString());
 
         // Danh sách các cột cần loại bỏ
@@ -39,7 +39,7 @@ public class Main {
             if (attribute != null) {
                 indicesToDrop.add(attribute.index());
             } else {
-                System.out.println("Không tìm thấy cột: " + columnName);
+                System.out.println("Not found columns: " + columnName);
             }
         }
 
@@ -51,17 +51,17 @@ public class Main {
             dataset.deleteAttributeAt(index);
         }
 
-        // Đặt "vote_average" làm thuộc tính mục tiêu (class)
-        Attribute targetAttribute = dataset.attribute("vote_average");
+        // Đặt "averageRating" làm thuộc tính mục tiêu (class)
+        Attribute targetAttribute = dataset.attribute("averageRating");
         if (targetAttribute != null) {
             dataset.setClass(targetAttribute);
         } else {
-            System.err.println("Lỗi: Không tìm thấy cột 'vote_average'!");
+            System.err.println("Error: Cannot found column 'averageRating'!");
             return;
         }
 
         // In thông tin tổng quan về dataset sau khi cập nhật
-        System.out.println("Thông tin tổng quan dataset sau khi cập nhật:");
+        System.out.println("General dataset after updated:");
         System.out.println(dataset.toSummaryString());
 
         // Lưu dataset đã cập nhật dưới dạng file CSV mới
@@ -75,6 +75,6 @@ public class Main {
         saver.setFile(new File(outputFilePath));
         saver.writeBatch();
 
-        System.out.println("Đã xử lý dữ liệu xong và lưu vào: " + outputFilePath);
+        System.out.println("Processed and saving to: " + outputFilePath);
     }
 }

@@ -1,5 +1,7 @@
 package org.example.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -28,9 +30,10 @@ public class MovieRequestDTO {
     @Min(value = 0, message = "Popularity must be non-negative")
     private Double popularity;
 
-    @NotNull(message = "Average rating is required")
-    @Min(value = 0, message = "Average rating must be non-negative")
-    private Double averageRating;
+    @NotNull(message = "Vote average is required")
+    @Min(value = 0, message = "Vote average must be non-negative")
+//    @JsonProperty("vote_average")
+    private Double vote_average;
 
     @NotNull(message = "Number of votes is required")
     @Min(value = 0, message = "Number of votes must be non-negative")
@@ -48,7 +51,7 @@ public class MovieRequestDTO {
     @NotNull(message = "Adult content flag is required")
     private Boolean adult;
 
-    @NotNull(message = "tconst is required")
+//    @NotNull(message = "tconst is required")
     private String tconst;
 
     private String originalLanguage;
@@ -117,12 +120,12 @@ public class MovieRequestDTO {
         this.popularity = popularity;
     }
 
-    public Double getAverageRating() {
-        return averageRating;
+    public Double getVoteAverage() {
+        return vote_average;
     }
 
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
+    public void setVoteAverage(Double vote_average) {
+        this.vote_average = vote_average;
     }
 
     public Integer getNumVotes() {
