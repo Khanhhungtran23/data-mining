@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=build /app/target/movie-rating-prediction-1.0-SNAPSHOT.jar app.jar
 
 # Copy thư mục data vào container
-COPY data/ /app/data/
+COPY modelEvaluation/data/ /app/data/
 
 # Tạo thư mục logs
 RUN mkdir -p /app/logs
