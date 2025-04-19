@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.jpmml.evaluator.mining.MiningModelEvaluator;
 
 @Service
 public class PMMLModelService {
@@ -25,7 +24,7 @@ public class PMMLModelService {
     private static final Logger logger = LoggerFactory.getLogger(PMMLModelService.class);
 
     private Evaluator evaluator;
-    private String modelType = "Random Forest (PMML)";
+    private String modelType = "M5P Decision Tree (PMML)";
     private List<? extends InputField> inputFields;
     private List<? extends TargetField> targetFields;
 
@@ -35,20 +34,20 @@ public class PMMLModelService {
             logger.info("Loading PMML model...");
 
             // Load PMML model from resources
-            ClassPathResource resource = new ClassPathResource("src/main/resources/models/m5p_model.pmml");
+            ClassPathResource resource = new ClassPathResource("models/m5p_model.pmml");
             InputStream inputStream = resource.getInputStream();
 
             // Parse PMML
             PMML pmml = PMMLUtil.unmarshal(inputStream);
 
-            // Create model evaluator
-//            ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-            evaluator = new MiningModelEvaluator(pmml);
-
+            // Sử dụng ModelEvaluatorBuilder trực tiếp
+            evaluator = new ModelEvaluatorBuilder(pmml).build();
 
             // Get input and target fields
             inputFields = evaluator.getInputFields();
             targetFields = evaluator.getTargetFields();
+
+            logger.info("Target field: {}", targetFields.get(0).getName().getValue());
 
             logger.info("PMML format - M5P model loaded successfully. Model type: {}", modelType);
             logger.info("Model has {} input fields and {} target fields",
@@ -77,6 +76,7 @@ public class PMMLModelService {
                 }
             }
 
+            logger.info("Input to model: {}", inputData);
             // Evaluate model
             Map<FieldName, ?> results = evaluator.evaluate(inputData);
 
@@ -96,11 +96,11 @@ public class PMMLModelService {
                     prediction = Double.parseDouble(result.toString());
                 }
                 // Scale if needed (uncomment if your model outputs 0-1 values)
-                 prediction = prediction * 10;
+                prediction = prediction * 10;
             } else {
                 prediction = Double.parseDouble(targetValue.toString());
                 // Scale if needed (uncomment if your model outputs 0-1 values)
-                 prediction = prediction * 10;
+                prediction = prediction * 10;
             }
 
             logger.info("Predicted rating for movie '{}': {}", movieRequestDTO.getTitle(), prediction);
@@ -115,22 +115,29 @@ public class PMMLModelService {
     private Object mapDtoFieldToModelInput(String fieldName, MovieRequestDTO dto) {
         switch (fieldName) {
             case "id":
-                return dto.getId().doubleValue();
+                return dto.getId().doubleValue() / 1_000_000.0;
             case "vote_count":
-                return dto.getVoteCount().doubleValue();
+                return dto.getVoteCount().doubleValue() / 500_000.0;
             case "revenue":
-                return dto.getRevenue().doubleValue();
+                return dto.getRevenue().doubleValue() / 3_000_000_000.0;
             case "runtime":
-                return dto.getRuntime().doubleValue();
+                return dto.getRuntime() / 300.0;
             case "budget":
-                return dto.getBudget().doubleValue();
+                return dto.getBudget() / 500_000_000.0;
             case "popularity":
-                return dto.getPopularity();
-            case "vote_average": // This will be used as input now, not the target
-                return dto.getVoteAverage();
+                return dto.getPopularity() / 5000.0;
+            case "vote_average":
+                return dto.getVoteAverage() / 10.0;
             case "numVotes":
-                return dto.getNumVotes().doubleValue();
-            // Add others as needed based on the PMML model fields
+                return dto.getNumVotes().doubleValue() / 10_000_000.0;
+            case "genres":
+                return dto.getGenres() != null ? 1.0 : 0.0;
+            case "tconst":
+                return dto.getTconst() != null ? 1.0 : 0.0;
+            case "directors":
+                return dto.getDirectors() != null ? 1.0 : 0.0;
+            case "original_title":
+                return dto.getOriginalTitle() != null ? 1.0 : 0.0;
             default:
                 logger.warn("Field {} not found in DTO, returning null", fieldName);
                 return null;
