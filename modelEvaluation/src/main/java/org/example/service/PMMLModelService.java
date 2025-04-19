@@ -81,12 +81,10 @@ public class PMMLModelService {
             Map<FieldName, ?> results = evaluator.evaluate(inputData);
 
             // Get result
-            List<? extends TargetField> targetFields = evaluator.getTargetFields();
             TargetField targetField = targetFields.get(0); // Assuming single target
-
             Object targetValue = results.get(targetField.getName());
 
-            // Extract and scale prediction value (from 0-1 to 0-10 if needed)
+            // Extract prediction value
             double prediction;
             if (targetValue instanceof Computable) {
                 Object result = ((Computable) targetValue).getResult();
@@ -95,13 +93,13 @@ public class PMMLModelService {
                 } else {
                     prediction = Double.parseDouble(result.toString());
                 }
-                // Scale if needed (uncomment if your model outputs 0-1 values)
-                prediction = prediction * 10;
             } else {
                 prediction = Double.parseDouble(targetValue.toString());
-                // Scale if needed (uncomment if your model outputs 0-1 values)
-                prediction = prediction * 10;
             }
+
+            // Mô hình trả về giá trị từ 0-1 (đã được normalization)
+            // Cần chuyển đổi lại thành thang điểm 0-10
+            prediction = prediction * 10;
 
             logger.info("Predicted rating for movie '{}': {}", movieRequestDTO.getTitle(), prediction);
             return prediction;
@@ -115,29 +113,46 @@ public class PMMLModelService {
     private Object mapDtoFieldToModelInput(String fieldName, MovieRequestDTO dto) {
         switch (fieldName) {
             case "id":
-                return dto.getId().doubleValue() / 1_000_000.0;
+                return dto.getId() != null ? dto.getId().doubleValue() / 1_000_000.0 : 0.0;
             case "vote_count":
-                return dto.getVoteCount().doubleValue() / 500_000.0;
+                return dto.getVoteCount() != null ? dto.getVoteCount().doubleValue() / 500_000.0 : 0.0;
             case "revenue":
-                return dto.getRevenue().doubleValue() / 3_000_000_000.0;
+                return dto.getRevenue() != null ? dto.getRevenue().doubleValue() / 3_000_000_000.0 : 0.0;
             case "runtime":
-                return dto.getRuntime() / 300.0;
+                return dto.getRuntime() != null ? dto.getRuntime() / 300.0 : 0.0;
             case "budget":
-                return dto.getBudget() / 500_000_000.0;
+                return dto.getBudget() != null ? dto.getBudget() / 500_000_000.0 : 0.0;
             case "popularity":
-                return dto.getPopularity() / 5000.0;
+                return dto.getPopularity() != null ? dto.getPopularity() / 5000.0 : 0.0;
             case "vote_average":
-                return dto.getVoteAverage() / 10.0;
+                return dto.getVoteAverage() != null ? dto.getVoteAverage() / 10.0 : 0.0;
             case "numVotes":
-                return dto.getNumVotes().doubleValue() / 10_000_000.0;
+                return dto.getNumVotes() != null ? dto.getNumVotes().doubleValue() / 10_000_000.0 : 0.0;
+
+            case "title":
+                return dto.getTitle() != null ? 32.0 : 0.0;
+            case "status":
+                return dto.getStatus() != null ? 4.0 : 0.0;
+            case "release_date":
+                return dto.getReleaseDate() != null ? 50.0 : 0.0;
+            case "adult":
+                return dto.getAdult() != null ? (dto.getAdult() ? 1.0 : 0.0) : 0.0;
+            case "original_language":
+                return dto.getOriginalLanguage() != null ? 10.0 : 0.0;
+            case "original_title":
+                return dto.getOriginalTitle() != null ? 37.0 : 0.0;
+
             case "genres":
-                return dto.getGenres() != null ? 1.0 : 0.0;
+                return dto.getGenres() != null ? 40.0 : 0.0;
             case "tconst":
                 return dto.getTconst() != null ? 1.0 : 0.0;
             case "directors":
-                return dto.getDirectors() != null ? 1.0 : 0.0;
-            case "original_title":
-                return dto.getOriginalTitle() != null ? 1.0 : 0.0;
+                return dto.getDirectors() != null ? 40.0 : 0.0;
+            case "writers":
+                return dto.getWriters() != null ? 37.0 : 0.0;
+            case "cast":
+                return dto.getCast() != null ? 41.0 : 0.0;
+
             default:
                 logger.warn("Field {} not found in DTO, returning null", fieldName);
                 return null;
