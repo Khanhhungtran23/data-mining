@@ -78,10 +78,10 @@ public class MovieRatingPredictionService {
             // Configure a more memory-efficient RandomForest
             model = new RandomForest();
             // Configure RandomForest with memory constraints
-            ((RandomForest) model).setNumIterations(20);  // Reduced from 10 to 5 trees
+            ((RandomForest) model).setNumIterations(10);  // Reduced from 10 to 5 trees
             ((RandomForest) model).setMaxDepth(5);       // Reduced depth for memory efficiency
             ((RandomForest) model).setNumFeatures(5);    // Fewer features per tree
-            ((RandomForest) model).setBatchSize("50");   // Smaller batch size
+            ((RandomForest) model).setBatchSize("25");   // Smaller batch size
             ((RandomForest) model).setSeed(1);
             modelType = "RandomForest (Memory-Optimized)";
 
